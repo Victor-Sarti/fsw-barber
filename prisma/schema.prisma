@@ -51,3 +51,14 @@ model Booking {
   createAt  DateTime          @default(now())
   updateAt  DateTime          @updatedAt
 }
+
+// model Rating {
+//   id        String            @id @default(uuid())
+//   userId    String
+//   user      User              @relation(fields: [userId], references: [id])
+//   barbershopId String
+//   service   BarbershopService @relation(fields: [serviceId], references: [id])
+//   data      DateTime
+//   createAt  DateTime          @default(now())
+//   updateAt  DateTime          @updatedAt
+// }
