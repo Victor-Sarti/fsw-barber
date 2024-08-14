@@ -1,16 +1,46 @@
-import {  SearchIcon } from "lucide-react";
-import { Badge } from "./_components/ui/badge";
+import {SearchIcon } from "lucide-react";
 import Header from "./_components/header"
 import { Input } from "./_components/ui/input";
 import { Button } from "./_components/ui/button";
 import Image from "next/image";
-import { Card, CardContent } from "./_components/ui/card";
-import { Avatar, AvatarImage } from "./_components/ui/avatar";
+import {  CardContent } from "./_components/ui/card";
 import { db } from "./_lib/prisma";
 import BabershopItem from "./_components/barbershop-item";
+import BookingItem from "./_components/booking-item";
+
+interface QuickSearchOption{
+  imageUrl: string;
+  title: string
+}
+
+const quickSearchOptions: QuickSearchOption[] = [{
+  imageUrl: "/cabelo.svg",
+  title: "Cabelo"
+},{
+  imageUrl: "/barba.svg",
+  title: "Barba"
+},{
+  imageUrl: "/acabamento.svg",
+  title: "Acabamento"
+},{
+  imageUrl: "/masagem.svg",
+  title: "Massagem"
+},{
+  imageUrl: "/hidratacao.svg",
+  title: "Hidratação"
+},
+
+
+]
+
 const Home = async () => {
   //chamar meu banco de dados
   const barbershops = await db.barbershop.findMany({})
+  const popularBarbershops = await db.barbershop.findMany({
+    orderBy: {
+      name: "desc"
+    }
+  })
   return (
     <div>
       {/* header */}
@@ -19,6 +49,7 @@ const Home = async () => {
         <h2 className=" text-xl font-bold">Olá, Sarti</h2>
         <p>Sabado, 10 de Agosto.</p>
 
+        {/* Buscar */}
         <div className=" flex items-center gap-2 mt-6">
           <Input placeholder="Faça sua busca..." />
           <Button>
@@ -26,48 +57,47 @@ const Home = async () => {
           </Button>
 
         </div>
-          {/*Imagem  */}
+
+        {/* BUSCA RAPIDA */}
+
+        <div className=" flex gap-3 mt-6 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+          {quickSearchOptions.map((option) => (
+             <Button className=" gap-2 " variant="secondary" key={option.title}>
+             <Image src={option.imageUrl} width={16} height={16} alt={option.title}/> {option.title}
+           </Button>
+           ))}
+        
+
+        </div>
+
+        {/*Imagem  */}
         <div className=" relative w-full h-[150px] mt-6">
           <Image alt="Agende nos melhores Barber" src="/banner01.png" fill className="  rounded-xl object-cover" />
         </div>
-        
-          {/* Agendamento */}
-          <h2 className=" mb-3 mt-6 text-xs font-bold uppercase text-gray-400">Agendamentos</h2>
-        <Card className="">
-          <CardContent className="flex justify-between p-0">
 
-            {/* Esquerda */}
-        <div className=" flex flex-col  gap-2 py-5 pl-5">
-         <Badge className=" w-fit">Confirmado</Badge>
-          <h3 className="font-semibold">Corte de Cabelo</h3>
-          <div className="flex items-center gap-2">
-            <Avatar className=" h-6 w-6">
-              <AvatarImage src="https://utfs.io/f/c97a2dc9-cf62-468b-a851-bfd2bdde775f-16p.png"/>
-            </Avatar>
-            <p className="text-sm">Barbearia fsw</p>
-          </div>
-        </div>
-        {/* Direita */}
-        <div className=" flex flex-col items-center justify-center border-l-2 border-solid px-5">
-          <p className="text-sm">Agosto</p>
-          <p className="text-2xl">05</p>
-          <p className="text-sm">20:00</p>
+        {/* Agendamento */}
+        <BookingItem/>
 
-
-        </div>
-
-          </CardContent>
-        </Card>
-         
         <h2 className=" mb-3 mt-6 text-xs font-bold uppercase text-gray-400">Recomendados</h2>
-          <div className=" flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
-          {barbershops.map ((barbershop) => (
+        <div className=" flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
+          {barbershops.map((barbershop) => (
             <BabershopItem key={barbershop.id} barbershop={barbershop} />
           ))}
-          </div>
+        </div>
+        <h2 className=" mb-3 mt-6 text-xs font-bold uppercase text-gray-400">Populares</h2>
+
+        <div className=" flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
+          {popularBarbershops.map((barbershop) => (
+            <BabershopItem key={barbershop.id} barbershop={barbershop} />
+          ))}
+        </div>
 
       </div>
-
+      <footer className="">
+        <CardContent className=" py-6 px-5">
+          <p className="text-sm text-gray-400"> © 2023 Copyright <span className=" font-bold"> FSW Barber</span> </p>
+        </CardContent>
+      </footer>
     </div>
   )
 
