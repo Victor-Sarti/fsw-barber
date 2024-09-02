@@ -33,6 +33,6 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-color: black;
+
   }
 }
